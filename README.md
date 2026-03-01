@@ -214,12 +214,3 @@ pytest service/tests/ -v
 ```
 
 ---
-
-## Resume Bullets
-
-- **Designed and implemented** a production-grade Demand Shock Detector on **Azure Databricks** using a **Medallion lakehouse architecture** (bronze / silver / gold Delta Lake tables) governed by **Unity Catalog**.
-- **Engineered ML features** at scale with PySpark window functions (lag-1, lag-7, 7-day rolling mean/std, calendar features) and defined a data-driven shock label (`|z| ≥ 3σ`).
-- **Trained and tracked** a RandomForest demand forecasting model with **MLflow** (params, metrics, feature importance, training summary) and registered the Champion version in the Unity Catalog Model Registry.
-- **Built and deployed** a **FastAPI** inference microservice (Docker/docker-compose) that loads the Champion model on startup and returns real-time demand predictions with shock scores.
-- **Implemented scheduled Databricks Jobs** (Workflow JSON) for nightly bronze→gold ETL, weekly model retraining, and daily batch scoring with write-back to `gold_predictions_daily`.
-- **Wrote end-to-end tests** (FastAPI TestClient + monkeypatching) achieving 100% coverage of API endpoints and shock score logic.
