@@ -1,0 +1,16 @@
+version: "3.9"
+
+services:
+  demand-shock-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: demand-shock-api:latest
+    container_name: demand-shock-api
+    ports:
+      - "8000:8000"
+    environment:
+      - MLFLOW_TRACKING_URI=${MLFLOW_TRACKING_URI:-http://localhost:5000}
+      - MODEL_NAME=${MODEL_NAME:-demand_shock_detector}
+      - MODEL_VERSION=${MODEL_VERSION:-}
+    restart: unless-stopped
