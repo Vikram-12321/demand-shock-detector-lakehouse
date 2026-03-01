@@ -1,0 +1,61 @@
+{
+  "name": "demand-shock-bronze-to-gold",
+  "description": "Ingest CSV → bronze → silver → gold feature table",
+  "email_notifications": {},
+  "timeout_seconds": 3600,
+  "max_concurrent_runs": 1,
+  "tasks": [
+    {
+      "task_key": "01_bronze_ingest",
+      "description": "Read CSV from DBFS and append to bronze Delta table",
+      "notebook_task": {
+        "notebook_path": "/Repos/<your-username>/demand-shock-detector-lakehouse/databricks/notebooks/01_bronze_ingest",
+        "base_parameters": {}
+      },
+      "new_cluster": {
+        "spark_version": "14.3.x-scala2.12",
+        "node_type_id": "Standard_DS3_v2",
+        "num_workers": 1,
+        "spark_conf": {
+          "spark.databricks.delta.preview.enabled": "true"
+        }
+      },
+      "timeout_seconds": 1200
+    },
+    {
+      "task_key": "02_silver_clean",
+      "description": "Clean bronze → silver (typed, deduped)",
+      "depends_on": [{ "task_key": "01_bronze_ingest" }],
+      "notebook_task": {
+        "notebook_path": "/Repos/<your-username>/demand-shock-detector-lakehouse/databricks/notebooks/02_silver_clean",
+        "base_parameters": {}
+      },
+      "new_cluster": {
+        "spark_version": "14.3.x-scala2.12",
+        "node_type_id": "Standard_DS3_v2",
+        "num_workers": 1
+      },
+      "timeout_seconds": 1200
+    },
+    {
+      "task_key": "03_gold_features",
+      "description": "Silver → gold feature engineering",
+      "depends_on": [{ "task_key": "02_silver_clean" }],
+      "notebook_task": {
+        "notebook_path": "/Repos/<your-username>/demand-shock-detector-lakehouse/databricks/notebooks/03_gold_features",
+        "base_parameters": {}
+      },
+      "new_cluster": {
+        "spark_version": "14.3.x-scala2.12",
+        "node_type_id": "Standard_DS3_v2",
+        "num_workers": 1
+      },
+      "timeout_seconds": 1800
+    }
+  ],
+  "schedule": {
+    "quartz_cron_expression": "0 0 2 * * ?",
+    "timezone_id": "UTC",
+    "pause_status": "PAUSED"
+  }
+}
